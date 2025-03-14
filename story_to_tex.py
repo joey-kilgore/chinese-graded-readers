@@ -1,5 +1,6 @@
 import sys
 import re
+from text_to_speech import text_to_speech
 
 LATEX_HEADER = r"""\documentclass[16pt]{ctexart} % Increase font size
 \usepackage{xpinyin}
@@ -69,7 +70,7 @@ def format_latex(sentences):
         formatted_txt += l + "\n"
     return LATEX_HEADER + "\n" + formatted_txt + "\n" + LATEX_FOOTER
 
-def generate_text_files(sentences, base_name):
+def generate_text_and_audio_files(sentences, base_name):
     """Generates two text files for TTS:
     - One with only the Chinese text.
     - One with Chinese, English, and repeated Chinese.
@@ -90,8 +91,18 @@ def generate_text_files(sentences, base_name):
     with open(f"{base_name}_chinese.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(chinese_lines))
 
+    full_chinese_txt = ""
+    for c in chinese_lines:
+        full_chinese_txt += f"{c}\n"
+    text_to_speech(full_chinese_txt, f"{base_name}_chinese.mp3")
+
     with open(f"{base_name}_chinese_english_repeat.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(chinese_eng_repeat_lines))
+
+    full_chinese_txt = ""
+    for c in chinese_eng_repeat_lines:
+        full_chinese_txt += f"{c}\n"
+    text_to_speech(full_chinese_txt, f"{base_name}_chinese_english_repeat.mp3")
 
 def main():
     if len(sys.argv) != 2:
@@ -107,7 +118,7 @@ def main():
     with open(f"{base_name}.tex", "w", encoding="utf-8") as f:
         f.write(latex_output)
 
-    generate_text_files(sentences, base_name)
+    generate_text_and_audio_files(sentences, base_name)
 
     print(f"Generated: {base_name}.tex, {base_name}_chinese.txt, {base_name}_chinese_english_repeat.txt")
 
