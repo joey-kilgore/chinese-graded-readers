@@ -1,0 +1,44 @@
+\documentclass[16pt]{ctexart} % Increase font size
+\usepackage{xpinyin}
+\usepackage{setspace} % Package to control spacing
+\usepackage{reledmac} % three column footnotes
+\arrangementX[A]{threecol}
+\let\footnote\footnoteA
+\renewcommand{\baselinestretch}{2} % Adjust line spacing globally
+
+% Manually adjust the font size to ensure it takes effect
+\makeatletter
+\renewcommand{\normalsize}{\@setfontsize{\normalsize}{16pt}{16pt}} % Define base font size
+\makeatother
+
+\newcommand{\underword}[2]{\underline{#1}\footnote{#2}}
+
+\begin{document}
+
+\section*{Generated Graded Reader}
+
+
+\xpinyin*{\textbf{王明} 和 \textbf{李华} 是好朋友。}
+\xpinyin*{\textbf{王明} 住在 \underword{学校}{school} 旁边。}
+\xpinyin*{今天是星期六，他们去 \underword{公园}{park} 玩。}
+\xpinyin*{\textbf{李华} 喜欢 \underword{跑步}{running}，但是 \textbf{王明} 觉得 \underword{跑步}{running} 很累。}
+\xpinyin*{他们坐在 \underword{椅子}{chair} 上休息。}
+\xpinyin*{\textbf{王明} 说：“我们去 \underword{商店}{store} 吃点东西吧！”}
+\xpinyin*{\textbf{李华} 说：“好啊，我想喝 \underword{牛奶}{milk}。”}
+\xpinyin*{他们去 \underword{商店}{store} 买了 \underword{牛奶}{milk} 和 \underword{面包}{bread}。}
+\xpinyin*{吃完后，他们一起回家了。}
+
+
+\xpinyin*{ 晚上，\textbf{王明} 在家 \underword{看书}{reading}。}
+\xpinyin*{他喜欢 \underword{历史}{history} 书，也喜欢 \underword{小说}{novels}。}
+\xpinyin*{\textbf{王明} 的 \underword{妈妈}{mother} 说：“别看太久，早点 \underword{睡觉}{sleep}。”}
+\xpinyin*{\textbf{王明} 说：“好的，妈妈！”}
+\xpinyin*{第二天早上，\textbf{王明} 去 \underword{超市}{supermarket} 买 \underword{鸡蛋}{eggs} 和 \underword{蔬菜}{vegetables}。}
+\xpinyin*{他在 \underword{收银台}{checkout counter} 付钱，然后回家做 \underword{早饭}{breakfast}。}
+\xpinyin*{\textbf{李华} 来了，他说：“你做了什么？”}
+\xpinyin*{\textbf{王明} 说：“我做了 \underword{鸡蛋}{eggs} 和 \underword{米饭}{rice}。”}
+\xpinyin*{他们一起吃 \underword{早饭}{breakfast}，然后去 \underword{图书馆}{library} 学习。}
+
+
+
+\end{document}
