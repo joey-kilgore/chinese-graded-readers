@@ -2,8 +2,8 @@
 
 FOR Text-To-Speech you will need an Azure account setup and put your API key and region in `constants.py`
 
-For an Azure account go [HERE](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true)
-Create a Speech service [HERE](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource)
+For an Azure account go [HERE](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=ai-services&azure-portal=true)  
+Create a Speech service [HERE](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource)  
 From there you should be able to grab the API key and region to put in `constants.py`
 
 
