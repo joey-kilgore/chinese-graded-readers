@@ -21,6 +21,8 @@ This will generate a few things
 4. Audio file of just chinese audio
 5. Audio file of the chinese-english-chinese
 
+To compile the .text file into a formatted PDF you will need some form of LaTeX installed. I recommend using miktex, which you can download [HERE](https://miktex.org/download)
+
 ## Text input format
 Test input files are in the following form
 
