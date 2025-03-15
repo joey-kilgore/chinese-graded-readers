@@ -1,6 +1,8 @@
 import sys
 import re
+import argparse
 from text_to_speech import text_to_speech
+from gen_anki import generate_anki_flashcards
 
 LATEX_HEADER = r"""\documentclass[16pt]{ctexart} % Increase font size
 \usepackage{xpinyin}
@@ -105,22 +107,24 @@ def generate_text_and_audio_files(sentences, base_name):
     text_to_speech(full_chinese_txt, f"{base_name}_chinese_english_repeat.mp3")
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python convert_to_latex.py <input_script.txt>")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Convert a formatted text file to LaTeX, TTS files, and Anki CSV.")
+    parser.add_argument("input_file", help="Path to the input script file")
+    parser.add_argument("--generate-audio", action="store_true", help="Generate audio files (optional, costs money)")
+    args = parser.parse_args()
 
-    input_file = sys.argv[1]
-    base_name = input_file.rsplit(".", 1)[0]  # Remove file extension
-
-    sentences = parse_script(input_file)
+    base_name = args.input_file.rsplit(".", 1)[0]
+    sentences = parse_script(args.input_file)
     latex_output = format_latex(sentences)
 
     with open(f"{base_name}.tex", "w", encoding="utf-8") as f:
         f.write(latex_output)
 
-    generate_text_and_audio_files(sentences, base_name)
-
     print(f"Generated: {base_name}.tex, {base_name}_chinese.txt, {base_name}_chinese_english_repeat.txt")
+
+    generate_anki_flashcards(sentences, base_name)
+
+    if args.generate_audio:
+        generate_text_and_audio_files(sentences, base_name)
 
 if __name__ == "__main__":
     main()
