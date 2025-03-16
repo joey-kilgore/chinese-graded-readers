@@ -17,8 +17,6 @@ LATEX_HEADER = r"""\documentclass[16pt]{ctexart} % Increase font size
 \renewcommand{\normalsize}{\@setfontsize{\normalsize}{16pt}{16pt}} % Define base font size
 \makeatother
 
-\newcommand{\underword}[2]{\underline{#1}\footnote{#2}}
-
 \begin{document}
 
 \section*{Generated Graded Reader}
@@ -46,31 +44,37 @@ def parse_script(file_path):
     return parsed_sentences
 
 def format_latex(sentences):
-    """Formats sentences into LaTeX with xpinyin, bold names, and footnotes."""
+    """Formats sentences into LaTeX with numbered footnotes per page."""
+    vocab_dict = {}
+    footnote_texts = []
+    footnote_counter = 1
+
     def process_formatting(text):
-        """Apply both bold and underword formatting to a single line."""
-        para_break = "\n\n" if r"\p" in text else ""
+        nonlocal footnote_counter
+        para_break = "\n\n" if "\\p" in text else ""
+        if para_break != "": print("FOUND PARAGRAPH")
+        text = re.sub(r"\\p", "", text)  # Remove paragraph markers
+        text = re.sub(r"\\((.*?)\\)", r"\\\\textbf{\1}", text)  # Bold formatting
+        
+        def replace_vocab(match):
+            nonlocal footnote_counter
+            vocab, meaning = match.groups()
+            if vocab not in vocab_dict:
+                # First occurrence: Define the footnote with a label
+                vocab_dict[vocab] = f"{footnote_counter}"
+                footnote_counter += 1
+                return f"\\underline{{{vocab}}}\\footnote{{\\label{{{vocab_dict[vocab]}}} {meaning}}}"
+            else:
+                # Subsequent occurrences: Reference the existing footnote
+                return f"\\underline{{{vocab}}}\\footnotemark[{vocab_dict[vocab]}]"
+        
+        return re.sub(r"\[(.*?)\]\[(.*?)\]", replace_vocab, text), para_break
 
-        # Handle bold names (parentheses)
-        text = re.sub(r"\((.*?)\)", r"\\textbf{\1}", text)
+    processed_sentences = [process_formatting(ch) for ch, _ in sentences]
+    formatted_lines = [pb + "\\xpinyin*{" + ch + "}" for ch, pb in processed_sentences]
+    footnotes_section = "\n".join(footnote_texts) + "\n"
 
-        # Handle footnotes {curly braces}
-        text = re.sub(r"\[(.*?)\]\[(.*?)\]", r"\\underword{\1}{\2}", text)
-
-        # add paragraph breaks \p
-        text = re.sub(r"\\p", "", text)
-
-        return text, para_break
-
-    formatted_lines = []
-    for chinese, _ in sentences:
-        chinese, para_break = process_formatting(chinese)
-        formatted_lines.append(f"{para_break}\\xpinyin*{{{chinese}}}")
-    
-    formatted_txt = ""
-    for l in formatted_lines:
-        formatted_txt += l + "\n"
-    return LATEX_HEADER + "\n" + formatted_txt + "\n" + LATEX_FOOTER
+    return LATEX_HEADER + "\n".join(formatted_lines) + "\n" + footnotes_section + LATEX_FOOTER
 
 def generate_text_and_audio_files(sentences, base_name):
     """Generates two text files for TTS:
