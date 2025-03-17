@@ -55,7 +55,7 @@ def format_latex(sentences):
         para_break = "\n\n" if "\\p" in text else ""
         if para_break != "": print("FOUND PARAGRAPH")
         text = re.sub(r"\\p", "", text)  # Remove paragraph markers
-        text = re.sub(r"\\((.*?)\\)", r"\\\\textbf{\1}", text)  # Bold formatting
+        text = re.sub(r"\((.*?)\)", r"\\textbf{\1}", text)  # Bold formatting
         
         def replace_vocab(match):
             nonlocal footnote_counter
