@@ -8,6 +8,7 @@ LATEX_HEADER = r"""\documentclass[16pt]{ctexart} % Increase font size
 \usepackage{xpinyin}
 \usepackage{setspace} % Package to control spacing
 \usepackage{reledmac} % three column footnotes
+\usepackage[a4paper, total={7.5in, 10in}]{geometry}
 \arrangementX[A]{threecol}
 \let\footnote\footnoteA
 \renewcommand{\baselinestretch}{2} % Adjust line spacing globally
