@@ -8,7 +8,7 @@ LATEX_HEADER = r"""\documentclass[16pt]{ctexart} % Increase font size
 \usepackage{xpinyin}
 \usepackage{setspace} % Package to control spacing
 \usepackage{reledmac} % three column footnotes
-\usepackage[a4paper, total={7.5in, 10in}]{geometry}
+\usepackage[a6paper]{geometry}
 \arrangementX[A]{threecol}
 \let\footnote\footnoteA
 \renewcommand{\baselinestretch}{2} % Adjust line spacing globally
@@ -53,9 +53,9 @@ def format_latex(sentences):
     def process_formatting(text):
         nonlocal footnote_counter
         para_break = "\n\n" if "\\p" in text else ""
-        if para_break != "": print("FOUND PARAGRAPH")
         text = re.sub(r"\\p", "", text)  # Remove paragraph markers
         text = re.sub(r"\((.*?)\)", r"\\textbf{\1}", text)  # Bold formatting
+        text = re.sub(r"==(.*?)==",r"\\section{\1}", text)
         
         def replace_vocab(match):
             nonlocal footnote_counter
@@ -83,33 +83,50 @@ def generate_text_and_audio_files(sentences, base_name):
     - One with Chinese, English, and repeated Chinese.
     """
     chinese_lines = []
+    chinese_chapters = []
     chinese_eng_repeat_lines = []
+    chinese_eng_chapters = []
 
     for chinese, english in sentences:
+        # move to next chapter when we find chapter markers
+        if "==" in chinese and chinese_lines != []:
+            chinese_chapters.append(chinese_lines)
+            chinese_lines = []
+            chinese_eng_chapters.append(chinese_eng_repeat_lines)
+            chinese_eng_repeat_lines = []
+
         # Process bold formatting (remove parentheses)
         chinese_clean = re.sub(r"[()]", "", chinese)
         # Process footnote formatting (remove curly braces)
         chinese_clean = re.sub(r"\[(.*?)\]\[(.*?)\]", r"\1", chinese_clean)
         chinese_clean = re.sub(r"\\p", "", chinese_clean)
+        chinese_clean = re.sub(r"==(.*?)==", r"\1", chinese_clean)
 
         chinese_lines.append(chinese_clean)
         chinese_eng_repeat_lines.extend([chinese_clean, english, chinese_clean])
 
-    with open(f"{base_name}_chinese.txt", "w", encoding="utf-8") as f:
-        f.write("\n".join(chinese_lines))
+    chinese_chapters.append(chinese_lines)
+    chinese_eng_chapters.append(chinese_eng_repeat_lines)
 
-    full_chinese_txt = ""
-    for c in chinese_lines:
-        full_chinese_txt += f"{c}\n"
-    text_to_speech(full_chinese_txt, f"{base_name}_chinese.mp3")
+    for chapter in range(len(chinese_chapters)):
+        chinese_lines = chinese_chapters[chapter]
+        chinese_eng_repeat_lines = chinese_eng_chapters[chapter]
 
-    with open(f"{base_name}_chinese_english_repeat.txt", "w", encoding="utf-8") as f:
-        f.write("\n".join(chinese_eng_repeat_lines))
+        with open(f"{base_name}_chinese_{chapter}.txt", "w", encoding="utf-8") as f:
+            f.write("\n".join(chinese_lines))
 
-    full_chinese_txt = ""
-    for c in chinese_eng_repeat_lines:
-        full_chinese_txt += f"{c}\n"
-    text_to_speech(full_chinese_txt, f"{base_name}_chinese_english_repeat.mp3")
+        full_chinese_txt = ""
+        for c in chinese_lines:
+            full_chinese_txt += f"{c}\n"
+        text_to_speech(full_chinese_txt, f"{base_name}_chinese_{chapter}.mp3")
+
+        with open(f"{base_name}_chinese_english_repeat_{chapter}.txt", "w", encoding="utf-8") as f:
+            f.write("\n".join(chinese_eng_repeat_lines))
+
+        full_chinese_txt = ""
+        for c in chinese_eng_repeat_lines:
+            full_chinese_txt += f"{c}\n"
+        text_to_speech(full_chinese_txt, f"{base_name}_chinese_english_repeat_{chapter}.mp3")
 
 def main():
     parser = argparse.ArgumentParser(description="Convert a formatted text file to LaTeX, TTS files, and Anki CSV.")
