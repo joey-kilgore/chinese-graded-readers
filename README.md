@@ -1,4 +1,5 @@
 # Autogenerate Graded Readers
+<img width="695" height="843" alt="image" src="https://github.com/user-attachments/assets/1787bea1-a33c-4b68-94a9-264435f4cf22" />
 
 FOR Text-To-Speech you will need an Azure account setup and put your API key and region in `constants.py`
 
@@ -45,3 +46,7 @@ Then there are some additional formatting:
 - parenthesis for bolding (names)
 - square brackets for vocab [中文][chinese]
 - \p for starting new paragraphs
+
+
+## Example Output
+Checkout the debug.txt and related output files for an example usage!
